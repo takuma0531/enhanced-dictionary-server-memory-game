@@ -1,0 +1,29 @@
+{
+  "name": "server_memory_game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "cross-env NODE_ENV=development nodemon --exec ts-node src/index.ts"
+  },
+  "author": "Takuma Masaki",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "node": "^17.4.0",
+    "socket.io": "^4.4.1",
+    "ts-node": "^10.4.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.15",
+    "@types/socket.io": "^3.0.2",
+    "typescript": "^4.5.5"
+  }
+}
