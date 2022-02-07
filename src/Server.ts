@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import { Server as SocketServer, Socket } from "socket.io";
 import { createServer, Server as HttpServer } from "http";
 import { ServerParts, Route } from "./typings/common";
+import { SocketEventNames } from "./enums/SocketEventNames";
 
 export class Server {
   private readonly _app: Express;
@@ -22,7 +23,7 @@ export class Server {
 
   public init() {
     // TODO:
-    this._io.on("connection", () => {
+    this._io.on(SocketEventNames.CONNECTION, () => {
       console.log("connected");
     });
     this._httpServer.listen(this._port, () => {
