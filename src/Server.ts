@@ -23,7 +23,7 @@ export class Server {
 
   public init() {
     // TODO:
-    this._io.on(SocketEventNames.CONNECTION, () => {
+    this._io.on(SocketEventNames.CONNECTION, (socket: Socket) => {
       console.log("connected");
     });
     this._httpServer.listen(this._port, () => {
