@@ -6,5 +6,6 @@ export interface Word {
 
 export interface WordCard {
   id: string;
+  orderId: number;
   text: string;
 }
