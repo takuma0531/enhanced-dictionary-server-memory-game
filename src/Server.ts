@@ -3,6 +3,7 @@ import { Server as SocketServer, Socket } from "socket.io";
 import { createServer, Server as HttpServer } from "http";
 import { ServerParts, Route } from "./typings/common";
 import { SocketEventNames } from "./enums/SocketEventNames";
+import { gameHandler, connectionHandler } from "./listeners"; // TODO: can be dicoupled more?
 
 export class Server {
   private readonly _app: Express;
@@ -22,8 +23,9 @@ export class Server {
   }
 
   public init() {
-    // TODO:
     this._io.on(SocketEventNames.CONNECTION, (socket: Socket) => {
+      gameHandler.init(this._io, socket);
+      connectionHandler.init(this._io, socket);
       console.log("connected");
     });
     this._httpServer.listen(this._port, () => {

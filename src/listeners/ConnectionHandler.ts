@@ -1,16 +1,13 @@
 import { Server, Socket } from "socket.io";
 import { SocketEventNames } from "../enums/SocketEventNames";
 
-export class ConnectionHandler {
-  private readonly _io: Server;
-  private readonly _socket: Socket;
+class ConnectionHandler {
+  private _io: Server;
+  private _socket: Socket;
 
-  constructor(io: Server, socket: Socket) {
+  public init(io: Server, socket: Socket) {
     this._io = io;
     this._socket = socket;
-  }
-
-  public init() {
     this.onDisconnect();
   }
 
@@ -20,3 +17,5 @@ export class ConnectionHandler {
     });
   }
 }
+
+export const connectionHandler = new ConnectionHandler();

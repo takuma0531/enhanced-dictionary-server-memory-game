@@ -1,4 +1,4 @@
-import { ConnectionHandler } from "./ConnectionHandler";
-import { GameHandler } from "./GameHandler";
+import { connectionHandler } from "./ConnectionHandler";
+import { gameHandler } from "./GameHandler";
 
-export { ConnectionHandler, GameHandler };
+export { connectionHandler, gameHandler };

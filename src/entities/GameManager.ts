@@ -1,7 +1,7 @@
 import { Board } from "../Board";
 import { Word } from "../typings/word";
 
-export class GameManager {
+class GameManager {
   private games: Record<string, Board> = {};
 
   public createGame(room: string, words: Word[]) {
@@ -16,3 +16,5 @@ export class GameManager {
     delete this.games[room];
   }
 }
+
+export const gameManager = new GameManager();
