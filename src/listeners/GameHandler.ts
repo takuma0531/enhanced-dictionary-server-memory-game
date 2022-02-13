@@ -16,7 +16,8 @@ class GameHandler {
 
   public onShuffle(words: Word[]) {
     const room = Array.from(this._socket.rooms)[1];
-    gameManager.createGame(room, words);
+    const board = gameManager.createGame(room, words);
+    this._io.emit(SocketEventNames.INITIAL_GAME_DATA_SHARE, board.cards);
   }
 
   public onClick(wordCardOrderId: number) {

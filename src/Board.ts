@@ -3,13 +3,13 @@ import { WordObjectConverter } from "./utils/WordObjectConverter";
 
 export class Board {
   private _elapsedTime: number;
-  private _cards: WordCard[];
+  public cards: WordCard[];
   private _matches: WordCard[];
   private _selectedCards: WordCard[];
 
   constructor(words: Word[]) {
     this._elapsedTime = 0;
-    this._cards = this.shuffle(words);
+    this.cards = this.shuffle(words);
     this._matches = [];
   }
 
@@ -20,7 +20,7 @@ export class Board {
   }
 
   public click(wordCardOrderId: number): WordCard[] {
-    const clickedCard = this._cards.find(
+    const clickedCard = this.cards.find(
       (card) => card.orderId == wordCardOrderId
     );
     if (
@@ -54,6 +54,6 @@ export class Board {
   }
 
   public checkIfFinished(): boolean {
-    return this._matches.length == this._cards.length;
+    return this._matches.length == this.cards.length;
   }
 }
