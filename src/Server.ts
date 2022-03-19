@@ -18,7 +18,7 @@ export class Server {
     this._httpServer = createServer(this._app);
     this._io = new SocketServer(this._httpServer, {
       cors: {
-        origin: ClientConstants.CLIENT_HOST,
+        origin: `${ClientConstants.CLIENT_HOST}:${ClientConstants.CLIENT_PORT}`,
       },
     });
     this._host = serverParts.host;
