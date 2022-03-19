@@ -4,6 +4,7 @@ import { createServer, Server as HttpServer } from "http";
 import { ServerParts, Route } from "./typings/common";
 import { SocketEventNames } from "./enums/SocketEventNames";
 import { gameHandler, connectionHandler } from "./listeners"; // TODO: can be dicoupled more?
+import { ClientConstants } from "./config/constants";
 
 export class Server {
   private readonly _app: Express;
@@ -15,7 +16,11 @@ export class Server {
   constructor(serverParts: ServerParts) {
     this._app = express();
     this._httpServer = createServer(this._app);
-    this._io = new SocketServer(this._httpServer);
+    this._io = new SocketServer(this._httpServer, {
+      cors: {
+        origin: ClientConstants.CLIENT_HOST,
+      },
+    });
     this._host = serverParts.host;
     this._port = serverParts.port;
     this.setMiddlewares(serverParts.middlewares);
@@ -30,6 +35,10 @@ export class Server {
     });
     this._httpServer.listen(this._port, () => {
       console.log(`Server is running on ${this._host}:${this._port}`);
+    });
+
+    this._app.get("/", (req, res) => {
+      res.send("<h1>Server is online</h1>");
     });
   }
 

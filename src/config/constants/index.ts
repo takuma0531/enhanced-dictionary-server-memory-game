@@ -1,3 +1,4 @@
+import { ClientConstants } from "./ClientConstants";
 import { ServerConstants } from "./ServerConstants";
 
-export { ServerConstants };
+export { ClientConstants, ServerConstants };
