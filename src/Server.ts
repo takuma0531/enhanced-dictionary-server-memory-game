@@ -5,18 +5,18 @@ import { ServerParts, Route } from "./typings/common";
 import { SocketEventNames } from "./enums/SocketEventNames";
 import { gameHandler, connectionHandler } from "./listeners"; // TODO: can be dicoupled more?
 import { ClientConstants } from "./config/constants";
+import socketServer from "./SocketServer";
 
 export class Server {
   private readonly _app: Express;
   private readonly _httpServer: HttpServer;
-  private readonly _io: SocketServer;
   private readonly _port: string;
   private readonly _host: string;
 
   constructor(serverParts: ServerParts) {
     this._app = express();
     this._httpServer = createServer(this._app);
-    this._io = new SocketServer(this._httpServer, {
+    socketServer.init(this._httpServer, {
       cors: {
         origin: `${ClientConstants.CLIENT_HOST}:${ClientConstants.CLIENT_PORT}`,
       },
@@ -28,9 +28,9 @@ export class Server {
   }
 
   public init() {
-    this._io.on(SocketEventNames.CONNECTION, (socket: Socket) => {
-      gameHandler.init(this._io, socket);
-      connectionHandler.init(this._io, socket);
+    socketServer.on(SocketEventNames.CONNECTION, () => {
+      gameHandler.init();
+      connectionHandler.onDisconnect();
       console.log("connected");
     });
     this._httpServer.listen(this._port, () => {
