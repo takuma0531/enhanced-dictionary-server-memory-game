@@ -11,6 +11,7 @@ export class Board {
     this._elapsedTime = 0;
     this.cards = this.shuffle(words);
     this._matches = [];
+    this._selectedCards = [];
   }
 
   private shuffle(words: Word[]): WordCard[] {
