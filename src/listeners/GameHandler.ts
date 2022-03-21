@@ -1,40 +1,52 @@
-import { Socket } from "socket.io";
+import { Socket, Server } from "socket.io";
 import { gameManager } from "../entities/GameManager";
 import { Word } from "../typings/word";
 import { SocketEventNames } from "../enums/SocketEventNames";
-import socketServer from "../SocketServer";
 
 class GameHandler {
-  public init() {
-    socketServer.on(SocketEventNames.GAME_START, this.onShuffle);
-    socketServer.on(SocketEventNames.GAME_CLICK, this.onClick);
+  private static _instance: GameHandler;
+
+  constructor() {}
+
+  public static getInstance() {
+    if (this._instance == null) this._instance = new GameHandler();
+    return this._instance;
   }
 
-  public onShuffle(socket: Socket, words: Word[]) {
-    const room = Array.from(socket.rooms)[1];
-    const board = gameManager.createGame(room, words);
-    socketServer.emit(SocketEventNames.INITIAL_GAME_DATA_SHARE, board.cards);
+  public init(io: Server, socket: Socket) {
+    this.onShuffle(io, socket);
+    this.onClick(io, socket);
   }
 
-  public onClick(socket: Socket, wordCardOrderId: number) {
-    const room = Array.from(socket.rooms)[1];
-    const game = gameManager.getGame(room);
+  public onShuffle(io: Server, socket: Socket) {
+    socket.on(SocketEventNames.GAME_START, (words: Word[]) => {
+      const room = Array.from(socket.rooms)[1];
+      const board = gameManager.createGame(room, words);
+      io.emit(SocketEventNames.INITIAL_GAME_DATA_SHARE, board.cards);
+    });
+  }
 
-    game.checkIfFlippable(wordCardOrderId) &&
-      socketServer.emit(SocketEventNames.GAME_FLIP, wordCardOrderId);
+  public onClick(io: Server, socket: Socket) {
+    socket.on(SocketEventNames.GAME_CLICK, (wordCardOrderId: number) => {
+      const room = Array.from(socket.rooms)[1];
+      const game = gameManager.getGame(room);
 
-    const currentlySelectedCards = game.click(wordCardOrderId);
+      game.checkIfFlippable(wordCardOrderId) &&
+        io.emit(SocketEventNames.GAME_FLIP, wordCardOrderId);
 
-    if (currentlySelectedCards.length !== 2) return;
+      const currentlySelectedCards = game.click(wordCardOrderId);
 
-    if (game.checkIfMatched()) {
-      socketServer.emit(SocketEventNames.GAME_CHECK, currentlySelectedCards);
+      if (currentlySelectedCards.length !== 2) return;
 
-      game.checkIfFinished() && socketServer.emit(SocketEventNames.GAME_FINISH);
-    } else {
-      socketServer.emit(SocketEventNames.GAME_UNFLIP, currentlySelectedCards);
-    }
+      if (game.checkIfMatched()) {
+        io.emit(SocketEventNames.GAME_CHECK, currentlySelectedCards);
+
+        game.checkIfFinished() && io.emit(SocketEventNames.GAME_FINISH);
+      } else {
+        io.emit(SocketEventNames.GAME_UNFLIP, currentlySelectedCards);
+      }
+    });
   }
 }
 
-export const gameHandler = new GameHandler();
+export default GameHandler;

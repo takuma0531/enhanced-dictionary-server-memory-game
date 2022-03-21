@@ -1,26 +1,27 @@
 import express, { Express } from "express";
-import { Server as SocketServer, Socket } from "socket.io";
 import { createServer, Server as HttpServer } from "http";
 import { ServerParts, Route } from "./typings/common";
-import { SocketEventNames } from "./enums/SocketEventNames";
-import { gameHandler, connectionHandler } from "./listeners"; // TODO: can be dicoupled more?
 import { ClientConstants } from "./config/constants";
-import socketServer from "./SocketServer";
+import CustomSocketServer from "./SocketServer";
 
 export class Server {
   private readonly _app: Express;
   private readonly _httpServer: HttpServer;
   private readonly _port: string;
   private readonly _host: string;
+  private readonly _customSocketServer: CustomSocketServer;
 
   constructor(serverParts: ServerParts) {
     this._app = express();
     this._httpServer = createServer(this._app);
-    socketServer.init(this._httpServer, {
-      cors: {
-        origin: `${ClientConstants.CLIENT_HOST}:${ClientConstants.CLIENT_PORT}`,
-      },
-    });
+    this._customSocketServer = CustomSocketServer.getInstance(
+      this._httpServer,
+      {
+        cors: {
+          origin: `${ClientConstants.CLIENT_HOST}:${ClientConstants.CLIENT_PORT}`,
+        },
+      }
+    );
     this._host = serverParts.host;
     this._port = serverParts.port;
     this.setMiddlewares(serverParts.middlewares);
@@ -28,11 +29,7 @@ export class Server {
   }
 
   public init() {
-    socketServer.on(SocketEventNames.CONNECTION, () => {
-      gameHandler.init();
-      connectionHandler.onDisconnect();
-      console.log("connected");
-    });
+    this._customSocketServer.init();
     this._httpServer.listen(this._port, () => {
       console.log(`Server is running on ${this._host}:${this._port}`);
     });

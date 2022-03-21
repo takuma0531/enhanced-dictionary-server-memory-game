@@ -1,13 +1,21 @@
 import { Server, Socket } from "socket.io";
 import { SocketEventNames } from "../enums/SocketEventNames";
-import socketServer from "../SocketServer";
 
 class ConnectionHandler {
-  public onDisconnect() {
-    socketServer.on(SocketEventNames.DISCONNECT, () => {
+  public static _instance: ConnectionHandler;
+
+  constructor() {}
+
+  public static getInstance() {
+    if (!this._instance) this._instance = new ConnectionHandler();
+    return this._instance;
+  }
+
+  public onDisconnect(socket: Socket) {
+    socket.on(SocketEventNames.DISCONNECT, () => {
       console.log("disconnected");
     });
   }
 }
 
-export const connectionHandler = new ConnectionHandler();
+export default ConnectionHandler;
