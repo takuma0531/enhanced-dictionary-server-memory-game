@@ -15,7 +15,11 @@ export class Board {
 
   private shuffle(words: Word[]): WordCard[] {
     const wordCards = WordObjectConverter.convertWordsToWordCards(words);
-    const shuffledWordCards = wordCards.sort(() => Math.random() - 0.5);
+    let shuffledWordCards = wordCards.sort(() => Math.random() - 0.5);
+    shuffledWordCards = wordCards.map((wordCard: WordCard, index: number) => {
+      wordCard.orderId = index;
+      return wordCard;
+    });
     return shuffledWordCards;
   }
 
