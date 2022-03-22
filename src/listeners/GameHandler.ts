@@ -43,7 +43,6 @@ class GameHandler {
 
         game.checkIfFinished() && io.emit(SocketEventNames.GAME_FINISH);
       } else {
-        console.log("unfilp");
         io.emit(SocketEventNames.GAME_UNFLIP, currentlySelectedCards);
       }
     });
